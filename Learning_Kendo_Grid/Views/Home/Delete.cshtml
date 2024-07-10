@@ -1,0 +1,148 @@
+﻿@model Models.User
+@using ViewModels
+@using Kendo.Mvc.UI;
+@{
+    ViewBag.Title = "حذف";
+    var dataVB = ViewBag.Degrees as List<SelectListItem>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .k-multiselect-clearable {
+        width: fit-content(15px);
+    }
+
+    #multiselect {
+        width: fit-content(15px);
+    }
+
+    span.k-widget.k-textbox, span.k-widget.k-combobox.k-combobox-clearable {
+        width: 100%;
+    }
+
+    .row {
+        margin-bottom: 5px;
+    }
+
+    .body-content {
+        justify-content: right;
+    }
+    #showDialogBtn {
+        width: 920px;
+    }
+</style>
+<h2>حذف کردن</h2>
+<section dir="rtl">
+    <div class="col-md-12">
+        <form id="EditForm" method="post" action="@Url.Action("DeleteConfirmed", "Home")">
+            <div class="row">
+                <div class="mb-1 col-md-5">
+                    @(Html.Kendo().TextBox()
+                        .Name("FirstName")
+                        .Placeholder("نام ")
+                        .Value(Model.FirstName)
+                        .HtmlAttributes(new { @readonly = "readonly" })
+                    )
+                </div>
+                <div class="mb-1 col-md-5">
+                    @(Html.Kendo().TextBox()
+                        .Name("LastName")
+                        .Placeholder("نام خانوادگی")
+                        .Value(Model.LastName)
+                        .HtmlAttributes(new { @readonly = "readonly" })
+                    )
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-1 col-md-5">
+                    @(Html.Kendo().TextBox()
+                        .Name("NationalCode")
+                        .Placeholder("کد ملی ")
+                        .Value(Model.NationalCode)
+                        .HtmlAttributes(new { @readonly = "readonly" })
+                    )
+                </div>
+                <div class="mb-1 col-md-5">
+                    @(Html.Kendo().ComboBox()
+                        .Name("Gender")
+                        .Placeholder("جنسیت")
+                        .DataTextField("Text")
+                        .DataValueField("Value")
+                        .BindTo(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "مرد", Value = "false" },
+                            new SelectListItem { Text = "زن", Value = "true" }
+                        })
+                        .Value(Model.Gender.ToString().ToLower())
+                        .HtmlAttributes(new { @readonly = "readonly" })
+                    )
+                </div>
+            </div>
+            <div class="row" id="lastrow">
+                <div class="col-md-10 mb-1">
+                    @(Html.Kendo().MultiSelect()
+                        .Name("Degree")
+                        .Placeholder("موارد مورد نظر را انتخاب کنید")
+                        .DataValueField("Value")
+                        .DataTextField("Text")
+                        .BindTo(dataVB)
+                        .Value(ViewBag.UserDegrees as List<SelectListItem>)
+                        .HtmlAttributes(new { @readonly = "readonly" })
+                    )
+                </div>
+            </div>
+            <div>
+                @(Html.Kendo().Dialog()
+                    .Name("deleteDialog")
+                    .Title("حذف داده")
+                    .Content("آیا از حذف این داده مطمئن هستید؟")
+                    .Width(400)
+                    .Modal(true)
+                    .Actions(actions =>
+                    {
+                        actions.Add().Text("بله").Action("onDeleteConfirmed");
+                        actions.Add().Text("خیر");
+                    })
+                    .Events(ev => ev.Close("onClose"))
+                )
+            </div>
+            <button id="showDialogBtn" class="btn btn-primary" type="button">حذف</button>
+        </form>
+    </div>
+</section>
+
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#showDialogBtn").click(function (event) {
+                event.preventDefault(); // Prevent default button action
+                $("#deleteDialog").data("kendoDialog").open();
+            });
+        });
+
+        function onDeleteConfirmed() {
+            var userId = @Model.Id;
+            $.ajax({
+                url: '@Url.Action("DeleteConfirmed", "Home")',
+                type: 'POST',
+                data: JSON.stringify({ id: userId }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                    alert("An error occurred while trying to delete the user.");
+                }
+            });
+        }
+
+        function onClose() {
+            // Handle the close event if necessary
+        }
+</script>

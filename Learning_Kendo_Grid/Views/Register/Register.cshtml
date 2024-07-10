@@ -1,0 +1,121 @@
+﻿@using Models
+@using ViewModels
+@using Kendo.Mvc.UI;
+@{
+    ViewBag.Title = "فرم ثبت نام";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .k-multiselect-clearable {
+        width: fit-content(15px);
+    }
+
+    #multiselect {
+        width: fit-content(15px);
+    }
+
+    span.k-widget.k-textbox {
+        width: 100%;
+    }
+
+    span.k-widget.k-combobox.k-combobox-clearable {
+        width: 100%;
+    }
+
+    .row {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .body-content {
+        justify-content: center;
+        display: flex;
+    }
+
+    #btn-width {
+        width: 100%;
+    }
+
+    .form-table {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+       /* .form-table .row {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }*/
+
+        /*    .form-table .row:last-child {
+                border-bottom: none;
+            }*/
+        .form-table .row {
+            padding: 10px 0;
+        }
+        .form-table .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+</style>
+
+<div>
+    <h2 style="text-align:center">فرم ثبت نام</h2>
+    <div class="container-fluid body-content" id="container-body">
+        
+        <div class="form-group form-table">
+            <form id="registerForm" method="post" action="@Url.Action("Create", "Register")">
+                <div class="row">
+                    <div class="mb-1 col-md-5">
+                        @(Html.Kendo().TextBox()
+                            .Name("FirstName").Placeholder("نام ")
+                        )
+                    </div>
+                    <div class="col-md-5">
+                        @(Html.Kendo().TextBox()
+                            .Name("LastName").Placeholder("نام خانوادگی")
+                        )
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-1 col-md-5">
+                        @(Html.Kendo().TextBox()
+                            .Name("NationalCode").Placeholder("کد ملی ")
+                        )
+                    </div>
+                    <div class="col-md-5">
+                        @(Html.Kendo().ComboBox()
+                            .Name("Gender")
+                            .Placeholder("جنسیت")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .BindTo(new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "مرد", Value = "false" },
+                                new SelectListItem { Text = "زن", Value = "true" }
+                            })
+                            .SelectedIndex(0)
+                            .Suggest(true)
+                        )
+                    </div>
+                </div>
+                <div class="row" id="lastrow">
+                    <div class="col-md-10 mb-1">
+                        @(Html.Kendo().MultiSelect()
+                            .Name("Degree")
+                            .Placeholder("موارد مورد نظر را انتخاب کنید")
+                            .BindTo(ViewBag.Degrees)
+                        )
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="btn-width">ثبت</button>
+            </form>
+        </div>
+    </div>
+</div>

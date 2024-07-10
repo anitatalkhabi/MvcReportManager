@@ -1,0 +1,73 @@
+﻿@using Models;
+@using ViewModels;
+@using Kendo.Mvc.UI;
+@{
+    ViewBag.Title = "گزارش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>گزارش</h2>
+
+
+<section dir="rtl">
+    <div class="col-md-12">
+
+        @(Html.Kendo().Grid<UserVM>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+
+                        columns.Bound(c => c.FirstName).HeaderHtmlAttributes(new { style = "text-align: center;" }).HtmlAttributes(new { style = "text-align: center;" }).Width(130);
+                        columns.Bound(c => c.LastName).HeaderHtmlAttributes(new { style = "text-align: center;" }).HtmlAttributes(new { style = "text-align: center;" }).Width(130);
+                        columns.Bound(c => c.NationalCode).HeaderHtmlAttributes(new { style = "text-align: center;" }).HtmlAttributes(new { style = "text-align: center;" }).Width(130);
+                        columns.Bound(c => c.Gender).HeaderHtmlAttributes(new { style = "text-align: center;" }).HtmlAttributes(new { style = "text-align: center;" }).Width(130).ClientTemplate("#= Gender ? 'زن' : 'مرد' #");
+                        columns.Bound(c => c.Id).Hidden();
+                        columns.Bound(c => c.StrDegree).HeaderHtmlAttributes(new { style = "text-align: center;" }).HtmlAttributes(new { style = "text-align: center;" }).Width(130);
+                        columns.Command(command =>
+                        {
+                            command.Custom("Edit").Click("editRow").Text("ویرایش");
+                            command.Custom("Delete").Click("deleteRow").Text("حذف");
+                        }).HeaderHtmlAttributes(new { style = "text-align: center;" }).HtmlAttributes(new { style = "text-align: center;" }).Width(150);
+
+                    })
+                    .ToolBar(tools => tools.Excel())
+                    .Selectable(s => s.Mode(GridSelectionMode.Single))
+                    .Scrollable()
+                    .Groupable()
+                    .Excel(excel => excel
+                        .FileName("Kendo UI Grid Export.xlsx")
+                        .AllPages(true)
+                       .ProxyURL(Url.Action("Excel_Export_Save", "Home"))
+    )
+                    .Sortable()
+                    .Filterable()
+                    .Pageable(pageable => pageable
+                        .Refresh(true)
+                        .PageSizes(true)
+                        .ButtonCount(5)
+                        )
+
+
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Read(read => read.Action("GetAllData", "Home"))
+                        .PageSize(5)
+                    )
+                )
+    </div>
+    
+</section>
+
+<script type="text/javascript">
+    function editRow(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = '@Url.Action("Edit", "Register")/' + dataItem.Id;
+    }
+
+    function deleteRow(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = '@Url.Action("Delete", "Home")/' + dataItem.Id; 
+    }
+</script>

@@ -1,0 +1,118 @@
+﻿@model Models.User
+@using ViewModels
+@using Kendo.Mvc.UI;
+@{
+    ViewBag.Title = "ویرایش";
+    var dataVB = ViewBag.Degrees as List<SelectListItem>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .k-multiselect-clearable {
+        width: fit-content(15px);
+    }
+
+    #multiselect {
+        width: fit-content(15px);
+    }
+
+    span.k-widget.k-textbox {
+        width: 100%;
+    }
+
+    span.k-widget.k-combobox.k-combobox-clearable {
+        width: 100%;
+    }
+
+    .row {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .body-content {
+        display: flex;
+        justify-content: center;
+    }
+
+    #btn-width {
+        width: 100%;
+    }
+
+    .form-table {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+        .form-table .row {
+            padding: 10px 0;
+        }
+
+        .form-table .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+</style>
+<div>
+    <h2 style="text-align:center">فرم ویرایش</h2>
+    <section dir="rtl">
+        <div class="container-fluid body-content" id="container-body">
+            <div class="form-group form-table">
+                <form id="EditForm" method="post" action="@Url.Action("Edit", "Register")">
+                    <div class="row">
+                        <div class="col-md-5 mb-1">
+                            @(Html.Kendo().TextBox()
+                            .Name("FirstName").Placeholder("نام ")
+                        )
+                        </div>
+                        <div class="col-md-5 mb-1">
+                            @(Html.Kendo().TextBox()
+                            .Name("LastName").Placeholder("نام خانوادگی")
+                        )
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 mb-1">
+                            @(Html.Kendo().TextBox()
+                            .Name("NationalCode").Placeholder("کد ملی ")
+                        )
+                        </div>
+                        <div class="col-md-5 mb-1">
+                            @(Html.Kendo().ComboBox()
+                            .Name("Gender")
+                            .Placeholder("جنسیت")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .BindTo(new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "مرد", Value = "false" },
+                                new SelectListItem { Text = "زن", Value = "true" }
+                            })
+                            .SelectedIndex(0)
+                            .Suggest(true)
+                        )
+                        </div>
+                    </div>
+                    <div class="row" id="lastrow">
+                        <div class="col-md-10 mb-1">
+                            @(Html.Kendo().MultiSelect()
+                            .Name("Degree")
+                            .Placeholder("موارد مورد نظر را انتخاب کنید")
+                            .DataValueField("Value")
+                            .DataTextField("Text")
+                            .BindTo(dataVB)
+                            .Value(ViewBag.UserDegrees as List<SelectListItem>)
+                        )
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block col-md-10" id="btn-width">ثبت</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
